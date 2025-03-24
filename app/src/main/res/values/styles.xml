@@ -1,0 +1,37 @@
+<resources>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.Projet">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/accentColor</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+    </style>
+
+    <!-- Button style -->
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- TextView style -->
+    <style name="TextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/score_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- Menu style -->
+    <style name="MenuStyle" parent="AppTheme">
+        <item name="android:background">@drawable/menu_background</item>
+    </style>
+
+    <!-- Pause menu style -->
+    <style name="PauseMenuStyle" parent="AppTheme">
+        <item name="android:background">@drawable/pause_menu_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">16dp</item>
+    </style>
+</resources>
