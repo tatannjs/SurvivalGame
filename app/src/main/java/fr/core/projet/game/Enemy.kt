@@ -20,7 +20,7 @@ class Enemy(Joueur: Bille) : Bille(50) {
     }
 
     override fun update() {
-        /*inclure la taille du perso pour éviter le tremblement*/
+        /* TODO : inclure la taille du perso pour éviter le tremblement*/
         if (this.getX() < Perso.getX()) {
             this.setX(this.getX() + this.getVx())
         } else {

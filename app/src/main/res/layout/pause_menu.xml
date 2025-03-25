@@ -1,25 +1,44 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80FF0000"
+    android:background="@android:color/transparent"
     android:gravity="center">
 
-
-    <!-- TODO / CORRIGER LA COULEUR DE FOND DU MENU DE PAUSE -->
-
     <LinearLayout
+        style="@style/PauseMenuStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/pause_menu_background"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@drawable/button_background"
-        style="@style/PauseMenuStyle">
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"
             android:text="Pause Menu"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/resumeButton"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Resume" />
+
+        <Button
+            android:id="@+id/quitButton"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Quit" />
     </LinearLayout>
 </FrameLayout>
