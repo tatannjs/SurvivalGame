@@ -58,9 +58,29 @@ open class Bille(size : Int) {
         this.vy = vy
     }
 
-    open fun update() {
+    fun setRadius(radius: Int) {
+        this.radius = radius
+    }
+    fun getRadius(): Int {
+        return radius
+    }
+
+    open fun update(screenWidth: Int, screenHeight: Int) {
         x += vx * delta
         y += vy * delta
+
+        //vérifie qu'il ne sort pas de l'écran
+        if (x - radius < 0) {
+            x = radius.toFloat()
+        } else if (x + radius > screenWidth) {
+            x = (screenWidth - radius).toFloat()
+        }
+
+        if (y - radius < 0) {
+            y = radius.toFloat()
+        } else if (y + radius > screenHeight) {
+            y = (screenHeight - radius).toFloat()
+        }
     }
 
     open fun draw(canvas: Canvas) {

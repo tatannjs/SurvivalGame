@@ -3,10 +3,14 @@ package fr.core.projet.game
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.os.Build
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.os.Handler
+import android.util.DisplayMetrics
+import android.view.WindowInsets
+import android.view.WindowManager
 
 class Game(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
@@ -15,11 +19,28 @@ class Game(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs)
     private var isRunning: Boolean = false
     private val handler: Handler = Handler()
     private val updateInterval: Long = 16 // Approx 60 FPS
+    private var screenWidth: Int
+    private var screenHeight: Int
 
     init {
         holder.addCallback(this)
         bille = Bille(10)
         enemy = Enemy(bille)
+
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            screenWidth = windowMetrics.bounds.width() - insets.left - insets.right
+            screenHeight = windowMetrics.bounds.height() - insets.top - insets.bottom
+        } else {
+            val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            screenWidth = displayMetrics.widthPixels
+            screenHeight = displayMetrics.heightPixels
+        }
     }
 
     fun getBille(): Bille {
@@ -52,8 +73,8 @@ class Game(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs)
     }
 
     private fun update() {
-        bille.update()
-        enemy.update()
+        bille.update(screenWidth,screenHeight)
+        enemy.update(screenWidth,screenHeight)
     }
 
     private fun draw() {

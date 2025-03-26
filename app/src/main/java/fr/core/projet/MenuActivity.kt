@@ -1,21 +1,33 @@
 package fr.core.projet
 
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import fr.core.projet.game.Bille
 
 class MenuActivity : AppCompatActivity() {
 
     private var score: Int = 0
     private lateinit var scoreTextView: TextView
     private lateinit var startGameButton: Button
-    private lateinit var viewScoreButton: Button
     private lateinit var creditButton: Button
     private lateinit var rulesButton: Button
+    private lateinit var changeSkinButton: Button
+    private lateinit var billeSurfaceView: SurfaceView
+    private lateinit var bille: Bille
+    private lateinit var surfaceHolder: SurfaceHolder
+    private val skins = listOf(Color.RED, Color.GREEN, Color.BLUE)
+    private var currentSkinIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +35,24 @@ class MenuActivity : AppCompatActivity() {
 
         scoreTextView = findViewById(R.id.scoreTextView)
         startGameButton = findViewById(R.id.startGameButton)
-        viewScoreButton = findViewById(R.id.viewScoreButton)
         creditButton = findViewById(R.id.creditButton)
         rulesButton = findViewById(R.id.rulesButton)
+        changeSkinButton = findViewById(R.id.changeSkinButton)
+        billeSurfaceView = findViewById(R.id.billeSurfaceView)
+        surfaceHolder = billeSurfaceView.holder
+        bille = Bille(10)
+
+        surfaceHolder.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                drawBille()
+            }
+
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+                drawBille()
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder) {}
+        })
 
         val buttonAnimation = AlphaAnimation(0.2f, 1.0f).apply {
             duration = 500
@@ -38,11 +65,6 @@ class MenuActivity : AppCompatActivity() {
             startGame()
         }
 
-        viewScoreButton.setOnClickListener {
-            it.startAnimation(buttonAnimation)
-            viewScore()
-        }
-
         creditButton.setOnClickListener {
             it.startAnimation(buttonAnimation)
             credit()
@@ -52,6 +74,28 @@ class MenuActivity : AppCompatActivity() {
             it.startAnimation(buttonAnimation)
             viewRules()
         }
+
+        changeSkinButton.setOnClickListener {
+            it.startAnimation(buttonAnimation)
+            changeSkin()
+        }
+    }
+
+    private fun drawBille() {
+        val canvas: Canvas? = surfaceHolder.lockCanvas()
+        if (canvas != null) {
+            canvas.drawColor(Color.WHITE)
+            bille.setX((canvas.width / 2).toFloat())
+            bille.setY((canvas.height / 2).toFloat())
+            bille.draw(canvas)
+            surfaceHolder.unlockCanvasAndPost(canvas)
+        }
+    }
+
+    private fun changeSkin() {
+        currentSkinIndex = (currentSkinIndex + 1) % skins.size
+        bille.setColor(Paint().apply { color = skins[currentSkinIndex] })
+        drawBille()
     }
 
     private fun viewRules() {

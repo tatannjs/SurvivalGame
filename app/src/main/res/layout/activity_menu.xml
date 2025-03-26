@@ -20,30 +20,42 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="wrap" />
 
+    <SurfaceView
+        android:id="@+id/billeSurfaceView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@android:dimen/thumbnail_height"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:hapticFeedbackEnabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/startGameButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scoreTextView"
+        app:layout_constraintWidth_percent="0.2" />
+
+    <Button
+        android:id="@+id/changeSkinButton"
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Skin"
+        app:layout_constraintEnd_toStartOf="@+id/billeSurfaceView"
+        app:layout_constraintTop_toTopOf="@+id/billeSurfaceView"
+        app:layout_constraintBottom_toBottomOf="@+id/billeSurfaceView"
+        android:layout_marginEnd="16dp" />
+
     <Button
         android:id="@+id/startGameButton"
         style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@android:dimen/thumbnail_height"
+        android:layout_marginTop="24dp"
         android:text="Start Game"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scoreTextView"
+        app:layout_constraintTop_toBottomOf="@+id/billeSurfaceView"
         app:layout_constraintWidth_percent="0.8" />
-
-    <Button
-        android:id="@+id/viewScoreButton"
-        style="@style/ButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="View Score"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startGameButton"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/rulesButton"
@@ -53,7 +65,7 @@
         android:text="View Rules"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewScoreButton"
+        app:layout_constraintTop_toBottomOf="@+id/startGameButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintWidth_percent="0.8"
         android:layout_marginTop="16dp" />
@@ -65,7 +77,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Credits"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
