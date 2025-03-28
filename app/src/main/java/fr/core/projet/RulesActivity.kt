@@ -7,6 +7,13 @@ class RulesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rules)
+
+        // Afficher le dialogue des règles stylisé
+        val rulesDialog = RulesDialogFragment()
+
+        // Ajouter un écouteur de licenciement pour terminer l'activité
+        rulesDialog.setDismissListener { finish() }
+
+        rulesDialog.show(supportFragmentManager, "RulesDialog")
     }
 }

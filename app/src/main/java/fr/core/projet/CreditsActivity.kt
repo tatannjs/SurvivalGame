@@ -7,6 +7,13 @@ class CreditsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_credits)
+
+        // Afficher le dialogue des crédits stylisé
+        val creditsDialog = CreditsDialogFragment()
+
+        // Ajouter un écouteur de licenciement pour terminer l'activité
+        creditsDialog.setDismissListener { finish() }
+
+        creditsDialog.show(supportFragmentManager, "CreditsDialog")
     }
 }

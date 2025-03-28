@@ -7,30 +7,34 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import fr.core.projet.game.Game
 
-class CustomSensorManager(pContext: MainActivity, private var game: Game): SensorEventListener{
+class CustomSensorManager(context: Context, private val game: Game) : SensorEventListener {
 
-    private val context = pContext
-    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private val speedMultiplier = 1.5f
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (event != null) {
+    fun onResume() {
+        accelerometer?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+        }
+    }
+
+    fun onPause() {
+        sensorManager.unregisterListener(this)
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            val x = -event.values[0] * speedMultiplier
+            val y = event.values[1] * speedMultiplier
+
             val bille = game.getBille()
-            bille.setVx(-event.values[0])
-            bille.setVy(event.values[1])
+            bille.setVx(x)
+            bille.setVy(y)
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-       // Nothing to do
+        // Ne rien faire
     }
-
-    fun onResume(){
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
-    }
-
-    fun onPause(){
-        sensorManager.unregisterListener(this)
-    }
-
 }

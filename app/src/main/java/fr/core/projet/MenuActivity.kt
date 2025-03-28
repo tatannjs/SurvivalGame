@@ -1,10 +1,10 @@
 package fr.core.projet
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -17,7 +17,12 @@ import fr.core.projet.game.Bille
 
 class MenuActivity : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_SELECTED_SKIN = "selected_skin"
+    }
+
     private var score: Int = 0
+    private var bestScore: Int = 0
     private lateinit var scoreTextView: TextView
     private lateinit var startGameButton: Button
     private lateinit var creditButton: Button
@@ -28,10 +33,16 @@ class MenuActivity : AppCompatActivity() {
     private lateinit var surfaceHolder: SurfaceHolder
     private val skins = listOf(Color.RED, Color.GREEN, Color.BLUE)
     private var currentSkinIndex = 0
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+
+        // Initialiser SharedPreferences
+        sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+        // Récupérer le meilleur score
+        bestScore = sharedPreferences.getInt("bestScore", 0)
 
         scoreTextView = findViewById(R.id.scoreTextView)
         startGameButton = findViewById(R.id.startGameButton)
@@ -41,6 +52,8 @@ class MenuActivity : AppCompatActivity() {
         billeSurfaceView = findViewById(R.id.billeSurfaceView)
         surfaceHolder = billeSurfaceView.holder
         bille = Bille(10)
+
+        updateBestScoreDisplay()
 
         surfaceHolder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
@@ -81,6 +94,10 @@ class MenuActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateBestScoreDisplay() {
+        scoreTextView.text = "Meilleur score: $bestScore"
+    }
+
     private fun drawBille() {
         val canvas: Canvas? = surfaceHolder.lockCanvas()
         if (canvas != null) {
@@ -99,25 +116,34 @@ class MenuActivity : AppCompatActivity() {
     }
 
     private fun viewRules() {
-        Toast.makeText(this, "Viewing rules", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, RulesActivity::class.java))
+        RulesDialogFragment().show(supportFragmentManager, "RulesDialog")
     }
 
     private fun credit() {
-        Toast.makeText(this, "Credits", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, CreditsActivity::class.java))
+        CreditsDialogFragment().show(supportFragmentManager, "CreditsDialog")
     }
 
     private fun startGame() {
         score = 0
         scoreTextView.text = "Score: $score"
         Toast.makeText(this, "Starting game...", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(EXTRA_SELECTED_SKIN, skins[currentSkinIndex])
+        startActivity(intent)
     }
 
+    // Méthode mise à jour pour afficher le score actuel
     private fun viewScore() {
         scoreTextView.text = "Score: $score"
         Toast.makeText(this, "Current score: $score", Toast.LENGTH_SHORT).show()
+    }
+
+    // Méthode pour mettre à jour le meilleur score si nécessaire
+    override fun onResume() {
+        super.onResume()
+        // Rafraîchir le meilleur score à chaque retour sur le menu
+        bestScore = sharedPreferences.getInt("bestScore", 0)
+        updateBestScoreDisplay()
     }
 
 }
