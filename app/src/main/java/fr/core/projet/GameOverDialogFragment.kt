@@ -6,10 +6,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import fr.core.projet.utils.DialogUtils
 
 class GameOverDialogFragment(
     private val finalScore: Int,
@@ -70,11 +72,9 @@ class GameOverDialogFragment(
 
     override fun onStart() {
         super.onStart()
-
-        // S'assurer que le dialogue prend une taille correcte
         dialog?.window?.setLayout(
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            DialogUtils.getDialogWidth(requireContext()),
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 }

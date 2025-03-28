@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
+import fr.core.projet.utils.DialogUtils
 
 class RulesDialogFragment : DialogFragment() {
 
@@ -42,7 +43,7 @@ class RulesDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            DialogUtils.getDialogWidth(requireContext()),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }

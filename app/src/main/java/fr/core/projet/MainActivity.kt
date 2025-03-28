@@ -7,6 +7,8 @@ import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +27,7 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
     private lateinit var pauseButton: AppCompatImageButton
     private lateinit var soundPool: SoundPool
     private var wasPaused = false
-    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
     private var soundIdCollision = 0
     private var soundIdScore = 0
 
@@ -34,30 +36,41 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        initializeUI()
+        initializeGame()
+        initializeSounds()
+
+        game.start()
+    }
+
+    private fun initializeUI() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        wasPaused = false
-        game = findViewById(R.id.surfaceView)
         scoreTextView = findViewById(R.id.scoreTextView)
         pauseButton = findViewById(R.id.pauseButton)
-        sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE)
-
-        val selectedSkin = intent.getIntExtra(MenuActivity.EXTRA_SELECTED_SKIN, Color.RED)
-        game.setPlayerSkin(selectedSkin);
-
-        game.setScoreListener(this)
-        sensorManager = CustomSensorManager(this, game)
-
         pauseButton.setOnClickListener {
             game.pause()
             showPauseDialog()
         }
+    }
 
-        // Initialiser les sons
+    private fun initializeGame() {
+        wasPaused = false
+        game = findViewById(R.id.surfaceView)
+        sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE)
+
+        val selectedSkin = intent.getIntExtra(MenuActivity.EXTRA_SELECTED_SKIN, Color.RED)
+        game.setPlayerSkin(selectedSkin);
+        game.setScoreListener(this)
+
+        sensorManager = CustomSensorManager(this, game)
+    }
+
+    private fun initializeSounds() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
@@ -71,18 +84,23 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
             @Suppress("DEPRECATION")
             soundPool = SoundPool(5, AudioManager.STREAM_MUSIC, 0)
         }
-
         soundIdCollision = soundPool.load(this, R.raw.sword, 1)
         soundIdScore = soundPool.load(this, R.raw.woosh, 1)
+    }
 
-        game.start()
+    private fun showPauseDialog() {
+        if (supportFragmentManager.findFragmentByTag("PauseDialog") == null) {
+            val pauseDialog = PauseDialogFragment {
+                game.resume()
+            }
+            pauseDialog.show(supportFragmentManager, "PauseDialog")
+        }
     }
 
     override fun onScoreUpdated(score: Int) {
         runOnUiThread {
             val oldScore = scoreTextView.text.toString().replace("Score: ", "").toInt()
             updateScoreDisplay(score)
-
             if (score > 0 && score % 100 == 0 && score > oldScore) {
                 soundPool.play(soundIdScore, 1f, 1f, 0, 0, 1f)
                 Toast.makeText(this, "Nouvelle vague !", Toast.LENGTH_SHORT).show()
@@ -175,15 +193,6 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         game.pause()
         showPauseDialog()
         return true
-    }
-
-    private fun showPauseDialog() {
-        if (supportFragmentManager.findFragmentByTag("PauseDialog") == null) {
-            val pauseDialog = PauseDialogFragment {
-                game.resume()
-            }
-            pauseDialog.show(supportFragmentManager, "PauseDialog")
-        }
     }
 
     override fun onBackPressed() {

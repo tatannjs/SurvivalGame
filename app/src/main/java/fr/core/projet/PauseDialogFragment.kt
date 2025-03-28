@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.ViewGroup.LayoutParams
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import fr.core.projet.utils.DialogUtils
 
 class PauseDialogFragment(private val onResumeGame: () -> Unit) : DialogFragment() {
 
@@ -16,39 +18,26 @@ class PauseDialogFragment(private val onResumeGame: () -> Unit) : DialogFragment
         val builder = AlertDialog.Builder(requireContext(), R.style.AppTheme)
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.pause_menu, null)
-
-        // Configuration des boutons
         val resumeButton: Button = view.findViewById(R.id.resumeButton)
         val quitButton: Button = view.findViewById(R.id.quitButton)
-
         resumeButton.setOnClickListener {
             onResumeGame()
             dismiss()
         }
-
         quitButton.setOnClickListener {
             returnToMenu()
         }
-
-        // Créer le dialogue
         val dialog = builder.setView(view).create()
-
-        // Fond transparent pour respecter le style défini dans pause_menu.xml
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        // Empêcher la fermeture en cliquant à l'extérieur
         dialog.setCanceledOnTouchOutside(false)
-
         return dialog
     }
 
     override fun onStart() {
         super.onStart()
-
-        // S'assurer que le dialogue prend une taille correcte
         dialog?.window?.setLayout(
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            DialogUtils.getDialogWidth(requireContext()),
+            LayoutParams.WRAP_CONTENT
         )
     }
 
@@ -59,9 +48,8 @@ class PauseDialogFragment(private val onResumeGame: () -> Unit) : DialogFragment
                 onResumeGame()
                 dismiss()
                 true
-            } else {
-                false
-            }
+            } else false
+
         }
     }
 

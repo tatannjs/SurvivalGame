@@ -6,12 +6,14 @@
 
     <LinearLayout
         style="@style/PauseMenuStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/pause_menu_background"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="?attr/dialogPreferredPadding">
 
         <TextView
             android:id="@+id/gameOverTitle"
