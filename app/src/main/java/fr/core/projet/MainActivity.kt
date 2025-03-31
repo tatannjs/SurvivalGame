@@ -18,20 +18,50 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import fr.core.projet.game.Game
 
+/**
+ * Activité principale du jeu qui gère l'interface utilisateur, les interactions,
+ * les sons et les événements de jeu.
+ *
+ * Cette classe implémente [Game.ScoreListener] pour recevoir les mises à jour du score
+ * et les événements de fin de partie.
+ */
 class MainActivity : AppCompatActivity(), Game.ScoreListener {
 
+    /** Instance du jeu associée à cette activité */
     private lateinit var game: Game
+
+    /** Gestionnaire de capteurs personnalisé pour contrôler le jeu */
     private lateinit var sensorManager: CustomSensorManager
+
+    /** TextView affichant le score actuel */
     private lateinit var scoreTextView: TextView
+
+    /** Préférences partagées pour stocker les scores et statistiques */
     private lateinit var sharedPreferences: SharedPreferences
+
+    /** Bouton de pause */
     private lateinit var pauseButton: AppCompatImageButton
+
+    /** Pool de sons pour les effets sonores du jeu */
     private lateinit var soundPool: SoundPool
+
+    /** Indique si le jeu était en pause avant la mise en arrière-plan de l'activité */
     private var wasPaused = false
+
+    /** Handler pour exécuter des tâches sur le thread principal */
     private val handler = Handler(Looper.getMainLooper())
+
+    /** ID du son de collision */
     private var soundIdCollision = 0
+
+    /** ID du son joué lors de l'augmentation du score */
     private var soundIdScore = 0
 
-
+    /**
+     * Initialise l'activité et configure tous les éléments nécessaires au jeu.
+     *
+     * @param savedInstanceState État de l'instance précédemment enregistré
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -43,6 +73,9 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         game.start()
     }
 
+    /**
+     * Initialise les éléments de l'interface utilisateur et configure les listeners.
+     */
     private fun initializeUI() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -58,6 +91,9 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         }
     }
 
+    /**
+     * Initialise le jeu et configure les paramètres initiaux.
+     */
     private fun initializeGame() {
         wasPaused = false
         game = findViewById(R.id.surfaceView)
@@ -70,6 +106,9 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         sensorManager = CustomSensorManager(this, game)
     }
 
+    /**
+     * Initialise le pool de sons et charge les ressources audio.
+     */
     private fun initializeSounds() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val audioAttributes = AudioAttributes.Builder()
@@ -88,6 +127,9 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         soundIdScore = soundPool.load(this, R.raw.woosh, 1)
     }
 
+    /**
+     * Affiche la boîte de dialogue de pause.
+     */
     private fun showPauseDialog() {
         if (supportFragmentManager.findFragmentByTag("PauseDialog") == null) {
             val pauseDialog = PauseDialogFragment {
@@ -97,6 +139,12 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         }
     }
 
+    /**
+     * Appelé lorsque le score est mis à jour dans le jeu.
+     * Met à jour l'affichage et joue des sons à certains seuils de score.
+     *
+     * @param score Le nouveau score
+     */
     override fun onScoreUpdated(score: Int) {
         runOnUiThread {
             val oldScore = scoreTextView.text.toString().replace("Score: ", "").toInt()
@@ -108,6 +156,11 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         }
     }
 
+    /**
+     * Met à jour l'affichage du score avec une animation.
+     *
+     * @param newScore Le nouveau score à afficher
+     */
     private fun updateScoreDisplay(newScore: Int) {
         val currentScore = scoreTextView.text.toString().replace("Score: ", "").toInt()
         if (newScore > currentScore) {
@@ -124,6 +177,12 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         scoreTextView.text = "Score: $newScore"
     }
 
+    /**
+     * Appelé lorsque la partie est terminée.
+     * Enregistre les statistiques, joue des effets et affiche la boîte de dialogue de fin de partie.
+     *
+     * @param finalScore Le score final du joueur
+     */
     override fun onGameOver(finalScore: Int) {
         runOnUiThread {
             val bestScore = sharedPreferences.getInt("bestScore", 0)
@@ -140,7 +199,7 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
 
             // Effet de vibration amélioré
             val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // Motif de vibration plus distinctif pour la fin de partie
                 vibrator.vibrate(android.os.VibrationEffect.createWaveform(
                     longArrayOf(0, 100, 100, 100, 100, 200),
@@ -170,6 +229,10 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         }
     }
 
+    /**
+     * Appelé lorsque l'activité est mise en pause.
+     * Met en pause le jeu et les capteurs.
+     */
     override fun onPause() {
         sensorManager.onPause()
         game.pause()
@@ -177,6 +240,10 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         super.onPause()
     }
 
+    /**
+     * Appelé lorsque l'activité reprend.
+     * Réactive les capteurs et affiche la boîte de dialogue de pause si nécessaire.
+     */
     override fun onResume() {
         super.onResume()
         sensorManager.onResume()
@@ -189,12 +256,22 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
         }
     }
 
+    /**
+     * Gère la navigation vers le haut (bouton retour de l'ActionBar).
+     * Met le jeu en pause et affiche le dialogue de pause.
+     *
+     * @return Toujours true pour indiquer que l'événement a été traité
+     */
     override fun onSupportNavigateUp(): Boolean {
         game.pause()
         showPauseDialog()
         return true
     }
 
+    /**
+     * Gère l'appui sur le bouton retour.
+     * Le comportement dépend de l'état actuel du jeu.
+     */
     override fun onBackPressed() {
         // Si un dialogue de fin de partie est affiché, ne rien faire
         if (supportFragmentManager.findFragmentByTag("GameOverDialog") != null) {
