@@ -197,19 +197,7 @@ class MainActivity : AppCompatActivity(), Game.ScoreListener {
             editor.putInt("lastScore", finalScore)
             editor.apply()
 
-            // Effet de vibration amélioré
-            val vibrator = getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Motif de vibration plus distinctif pour la fin de partie
-                vibrator.vibrate(android.os.VibrationEffect.createWaveform(
-                    longArrayOf(0, 100, 100, 100, 100, 200),
-                    intArrayOf(0, 150, 0, 150, 0, 200),
-                    -1
-                ))
-            } else {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(500)
-            }
+            sensorManager.vibrateGameOver()
 
             soundPool.play(soundIdCollision, 1f, 1f, 0, 0, 1f)
 

@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
-                android:text="1. Inclinez votre téléphone pour déplacer votre bille\n\n2. Évitez les obstacles bleus qui vous poursuivent\n\n3. Survivez aussi longtemps que possible pour gagner des points\n\n4. Le jeu devient plus difficile à chaque nouvelle vague\n\n5. Battez votre meilleur score!"
+                android:text="1. Inclinez votre appareil pour déplacer votre bille\n\n2. Évitez les obstacles bleus qui vous poursuivent\n\n3. Survivez aussi longtemps que possible pour gagner des points\n\n4. Le jeu devient plus difficile à chaque nouvelle vague\n\n5. Battez votre meilleur score!"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
         </ScrollView>

@@ -257,7 +257,7 @@ class Game(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs)
     /**
      * Met à jour l'état du jeu
      * Gère la logique des vagues, le calcul du score,
-     * les déplacements des entités et la détection des collisions
+     * les déplacements des entités et la détection des collisions circulaires
      */
     private fun update() {
         synchronized(updateLock) {
@@ -283,16 +283,21 @@ class Game(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs)
             // Optimisation: vérifier les collisions uniquement si nécessaire
             var collisonDetected = false
 
-            // Mise à jour des ennemis et vérification des collisions
+            // Mise à jour des ennemis et vérification des collisions circulaires
             for (enemy in enemies) {
                 enemy.update(screenWidth, screenHeight)
 
-                // Optimisation: calcul de distance au carré (évite la racine carrée coûteuse)
+                // Détection de collision circulaire:
+                // 1. Calculer la distance au carré entre les centres des deux cercles
                 val distanceX = enemy.getX() - bille.getX()
                 val distanceY = enemy.getY() - bille.getY()
                 val distanceSquared = distanceX * distanceX + distanceY * distanceY
+
+                // 2. Calculer la somme des rayons
                 val radiusSum = enemy.getRadius() + bille.getRadius()
 
+                // 3. Si la distance au carré est inférieure au carré de la somme des rayons,
+                //    alors les cercles se chevauchent (collision)
                 if (distanceSquared < radiusSum * radiusSum) {
                     collisonDetected = true
                     break
